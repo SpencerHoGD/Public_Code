@@ -1,13 +1,23 @@
+'''
+通过sqlite引擎，读取数据库数据
+'''
+
 import pandas
 import wordcloud
 import os
+import json
+from sqlalchemy import create_engine
 
-path = '/Users/lawyzheng/Desktop/greedyai_learning'
-json_list = [path + '/' + f for f in os.listdir(path) if f.endswith('.json')]
-df_list = list(map(pandas.read_json, json_list))
+path = '/Users/lawyzheng/Desktop/greedyai_learning/'
 
-df = pandas.concat(df_list, ignore_index=True)
-df.drop_duplicates('item_id', keep='first', inplace=True)
+#连接数据库
+engine = create_engine('sqlite:///' + path + 'toutiao_hot.db')
+df = pandas.read_sql('tb_toutiao_hot', con=engine)
+
+#将json数据转化成Python数据
+for col in df.columns:
+	if df[col].dtype == 'object':
+		df[col] = list(map(json.loads, df[col]))
 
 # 获取文章abstract数据
 abstract_list = df.abstract.to_list()
