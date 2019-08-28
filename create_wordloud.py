@@ -21,6 +21,9 @@ for col in df.columns:
 
 # 获取文章abstract数据
 abstract_list = df.abstract.to_list()
+for index, each in enumerate(abstract_list):
+	if not each:
+		print(index)
 abstract = "\n".join(abstract_list)
 
 # 获取文章的tags数据
@@ -29,7 +32,8 @@ tags = '\n'.join([' '.join(l) for l in tags_list])
 
 #清洗数据
 stopwords = {'人生第一份工作', '胜利退出演艺圈', '我的第一部5G手机',
-             '广州恒大淘宝足球俱乐部', '跳槽那些事儿', '越投入越精彩', '不完美妈妈', '原汁原味的德系SUV', '新闻'}
+             '广州恒大淘宝足球俱乐部', '跳槽那些事儿', '越投入越精彩', '不完美妈妈', '原汁原味的德系SUV', '新闻',
+             '头号大赢家', '理财大赛第二季','我在宫里做厨师'}
 wc = wordcloud.WordCloud(width=800, height=600, font_path='msyh.ttf', stopwords=stopwords)
 
 wc.generate(abstract + tags)
