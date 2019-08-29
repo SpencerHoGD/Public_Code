@@ -137,14 +137,15 @@ def main(logger):
     today_timestamp = int(time.mktime(today.timetuple()))
     yesterday_timestamp = int(time.mktime(yesterday.timetuple()))
 
+    now = int(time.time())
 
     #获取热搜
     logger.debug('正在获取热搜榜。')
-    targets = get_json_data(int(time.time()))
+    targets = get_json_data(now)
 
     #整理数据
     logger.debug('获取完成，正在进行数据整合。')
-    df = format_data(df, targets, int(time.time())
+    df = format_data(df, targets, now)
     #print(df)
 
     #获取每分钟的热搜
