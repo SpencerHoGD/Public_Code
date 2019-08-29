@@ -144,7 +144,7 @@ def main(logger):
 
     #整理数据
     logger.debug('获取完成，正在进行数据整合。')
-    df = format_data(df, targets, yesterday_timestamp)
+    df = format_data(df, targets, int(time.time())
     #print(df)
 
     #获取每分钟的热搜
