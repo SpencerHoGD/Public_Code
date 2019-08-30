@@ -11,7 +11,7 @@ def set_logger():
     logger.setLevel(logging.DEBUG)
 
     #文件输出
-    log_path = '/Users/lawyzheng/Desktop/Code/Public_Code/weibo_resou.log'
+    log_path = '/Users/lawyzheng/Library/Logs/weibo_resou.log'
     fh = logging.FileHandler(log_path)
     fh.setLevel(logging.WARNING)
 
