@@ -77,6 +77,35 @@ def get_json_data(timestamp):
     return data['data']['cards'][0]['card_group']
 
 
+def append_new_item_to_dataframe(target, timestamp, dataframe):
+    data = {
+        "title" : target['desc'],
+        "hot_index" : int(target['desc_extr']),
+        "start_time" : timestamp,
+        "end_time" : timestamp,
+        "lasting_time" : 0,
+        "still_in" : True
+    }
+
+    item = pandas.DataFrame(data, index=[0])
+    dataframe = pandas.concat([dataframe, item], ignore_index=True)
+
+    return dataframe
+
+
+def update_item_in_dataframe(item, target ,dataframe, timestamp):
+    #获取index
+    index = item.index[0]
+    #更新hot_index
+    dataframe.at[index, 'hot_index'] = int(target['desc_extr']) if dataframe.at[index, 'hot_index'] < int(target['desc_extr']) else dataframe.at[index, 'hot_index']
+    #更新end_time
+    dataframe.at[index, 'end_time'] = timestamp
+    #更新在是否还在热搜
+    dataframe.at[index, 'still_in'] = True
+    #更新在热搜时间
+    dataframe.at[index, 'lasting_time'] = timestamp - dataframe.at[index, 'start_time']
+
+
 def format_data(dataframe, targets, timestamp):
     for target  in targets:
         #不属于热搜榜
@@ -85,41 +114,19 @@ def format_data(dataframe, targets, timestamp):
 
         #如果dataframe为空，直接添加数据
         if dataframe.empty:
-            data = {
-                "title" : target['desc'],
-                "hot_index" : int(target['desc_extr']),
-                "showed_times" : 1,
-                "start_time" : timestamp,
-                "end_time" : timestamp
-            }
+            dataframe = append_new_item_to_dataframe(target, timestamp, dataframe)
 
-            item = pandas.DataFrame(data, index=[0])
-            dataframe = pandas.concat([dataframe, item], ignore_index=True)
 
         else:
             item = dataframe[dataframe.title == target['desc']]
             #如果不在dataframe中，则添加该数据
             if item.empty:
-                data = {
-                    "title" : target['desc'],
-                    "hot_index" : int(target['desc_extr']),
-                    "showed_times" : 1,
-                    "start_time" : timestamp,
-                    "end_time" : timestamp
-                }
-
-                item = pandas.DataFrame(data, index=[0])
-                dataframe = pandas.concat([dataframe, item], ignore_index=True)
+                dataframe = append_new_item_to_dataframe(target, timestamp, dataframe)
 
             #如果在dataframe中
             else:
-                index = item.index[0]
-                #更新hot_index
-                dataframe.at[index, 'hot_index'] = int(target['desc_extr']) if dataframe.at[index, 'hot_index'] < int(target['desc_extr']) else dataframe.at[index, 'hot_index']
-                #更新end_time
-                dataframe.at[index, 'end_time'] = timestamp
-                #更新showed_time
-                dataframe.at[index, 'showed_times'] += 1
+                update_item_in_dataframe(item, target, dataframe, timestamp)
+
 
     return dataframe
 
@@ -129,6 +136,9 @@ def main(logger):
     engine = create_engine('sqlite:////Users/lawyzheng/Desktop/Code/Public_Code/weibo_resou.db')
     df = pandas.read_sql('tb_weibo_resou', con=engine, index_col='index')
     logger.debug('连接数据库成功。')
+
+    #还原still_in数据
+    df['still_in'] = False
 
     #获取时间和时间戳
     today = datetime.date.today()

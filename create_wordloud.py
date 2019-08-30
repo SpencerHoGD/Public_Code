@@ -4,7 +4,6 @@
 
 import pandas
 import wordcloud
-import os
 import json
 from sqlalchemy import create_engine
 
@@ -31,7 +30,7 @@ tags_list = df.article_tags.to_list()
 tags = '\n'.join([' '.join(l) for l in tags_list])
 
 #清洗数据
-stopwords = {'人生第一份工作', '胜利退出演艺圈', '我的第一部5G手机', '澎湃新闻',
+stopwords = {'人生第一份工作', '胜利退出演艺圈', '我的第一部5G手机', '澎湃新闻', '4月吃什么', 
              '广州恒大淘宝足球俱乐部', '跳槽那些事儿', '越投入越精彩', '不完美妈妈', '原汁原味的德系SUV', '新闻',
              '头号大赢家', '理财大赛第二季','我在宫里做厨师'}
 wc = wordcloud.WordCloud(width=800, height=600, font_path='msyh.ttf', stopwords=stopwords)
