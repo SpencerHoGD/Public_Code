@@ -28,9 +28,9 @@ def get_hot_words_list(url):
 
     headers = {
         'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; '
-                            'Nexus 5 Build/MRA58N) AppleWebKit/537.36 '
-                            '(KHTML, like Gecko) Chrome/76.0.3809.132 '
-                            'Mobile Safari/537.36'
+                      'Nexus 5 Build/MRA58N) AppleWebKit/537.36 '
+                      '(KHTML, like Gecko) Chrome/76.0.3809.132 '
+                      'Mobile Safari/537.36'
     }
 
     resp = requests.get(url, headers=headers)
@@ -82,7 +82,6 @@ def main(logger):
 
     logger.info('数据获取成功，正在进行整合。')
     new_df = update_new_dataframe(hot_words, all_df)
-    print(new_df.head(100))
 
     logger.info('正在把数据录入数据库中。')
     new_df.to_sql('tb_bilibili_hotword', con=engine, index=True, if_exists='replace')
