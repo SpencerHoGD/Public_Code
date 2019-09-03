@@ -151,6 +151,7 @@ def main(logger):
 
     # 录入数据库
     logger.info('数据整合完成，正在录入数据库。')
+    df.to_excel('/Users/lawyzheng/Desktop/Code/weibo_resou.xlsx')
     df.to_sql('tb_weibo_resou', con=engine, index=True, if_exists='replace')
     logger.info('录入数据库成功，退出程序。')
 

@@ -84,6 +84,7 @@ def main(logger):
     new_df = update_new_dataframe(hot_words, all_df)
 
     logger.info('正在把数据录入数据库中。')
+    new_df.to_excel('/Users/lawyzheng/Desktop/Code/bilibili_hotword.xlsx')
     new_df.to_sql('tb_bilibili_hotword', con=engine, index=True, if_exists='replace')
 
 
