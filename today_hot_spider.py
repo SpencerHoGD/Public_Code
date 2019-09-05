@@ -5,6 +5,8 @@ import pandas
 import re
 from sqlalchemy import create_engine
 import logging
+import xlsxwriter
+import sys
 
 
 def set_logger():
@@ -45,7 +47,7 @@ def get_each_node_data(df, nodes):
         # 获得榜单的来源
         source = node.find('div', class_='cc-cd-lb').text.strip()
         # 若是不需要的榜单，则跳过
-        if source in ['什么值得买', '淘宝', '拼多多', '武大珞珈山水', '复旦日月光华', '北大未名']:
+        if source in ['什么值得买', '淘宝', '拼多多', '武大珞珈山水', '复旦大学日月光华', '北大未名']:
             continue
 
         messages = node.find('div', class_='cc-cd-cb-l nano-content').find_all('a')
@@ -83,7 +85,11 @@ def main(logger):
     engine = create_engine('sqlite:////Users/lawyzheng/Desktop/Code/spider.db')
 
     logger.info('开始运行程序，正在获取数据。')
-    html = get_html(url)
+    try:
+        html = get_html(url)
+    except Exception as e:
+        logger.info('网络请求失败，失败原因: %s' % e)
+        sys.exit(0)
 
     logger.info('数据获取成功，正在进行数据清洗整合。')
     nodes = get_nodes(html)
@@ -92,7 +98,9 @@ def main(logger):
 
     logger.info('数据整合完毕，正在录入数据库。')
     df.to_sql('tb_today_hot', con=engine, index=True, if_exists='replace')
-    df.to_excel('/Users/lawyzheng/Desktop/Code/today_hot.xlsx')
+
+    xlsx_content = pandas.ExcelWriter('/Users/lawyzheng/Desktop/Code/today_hot.xlsx', engine='xlsxwriter')
+    df.to_excel(xlsx_content, sheet_name='Sheet1')
     logger.info('数据录入成功。程序退出。')
 
 

@@ -4,6 +4,7 @@ import pandas
 import random
 import logging
 from sqlalchemy import create_engine
+import sys
 
 
 def set_logger():
@@ -143,7 +144,11 @@ def main(logger):
 
     # 获取热搜
     logger.info('正在获取热搜榜。')
-    targets = get_json_data(now)
+    try:
+        targets = get_json_data(now)
+    except Exception as e:
+        logger.info('网络请求失败，失败原因: %s' % e)
+        sys.exit(0)
 
     # 整理数据
     logger.info('获取完成，正在进行数据整合。')
