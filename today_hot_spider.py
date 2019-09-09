@@ -94,7 +94,10 @@ def main(logger):
     logger.info('数据获取成功，正在进行数据清洗整合。')
     nodes = get_nodes(html)
     df = pandas.read_sql('tb_today_hot', con=engine, index_col='index')
+    old_length = len(df)
     df = get_each_node_data(df, nodes)
+    new_length = len(df)
+    logger.info('增加数据 %d 条。' % (new_length - old_length))
 
     logger.info('数据整合完毕，正在录入数据库。')
     df.to_sql('tb_today_hot', con=engine, index=True, if_exists='replace')

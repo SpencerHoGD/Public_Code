@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 import pandas
 import time
 import logging
+import sys
 
 
 def set_logger():
@@ -75,7 +76,11 @@ def main(logger):
     url = 'https://s.search.bilibili.com/main/hotword'
 
     logger.info('开始启动程序，正在获取数据。')
-    hot_words = get_hot_words_list(url)
+    try:
+        hot_words = get_hot_words_list(url)
+    except Exception as e:
+        logger.info('网络请求失败。失败原因: %s' % e)
+        sys.exit(0)
 
     engine = create_engine('sqlite:////Users/lawyzheng/Desktop/Code/spider.db')
     all_df = pandas.read_sql('tb_bilibili_hotword', con=engine, index_col='index')

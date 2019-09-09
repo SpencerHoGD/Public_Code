@@ -30,7 +30,11 @@ def get_top_30(df, corpus, max_len=30):
     return h
 
 
-def main():
+def show_top_message(num=40):
+    '''
+    传入一个int参数
+    返回一个dataframe对象
+    '''
     now = int(time.time())
     engine = create_engine('sqlite:////Users/lawyzheng/Desktop/Code/spider.db')
     df = pandas.read_sql('tb_today_hot', con=engine, index_col='index')
@@ -52,17 +56,18 @@ def main():
 
     # print(clean_d)
 
-    num = 40
     top = get_top_30(df, clean_corpus, max_len=num)
-    result = ''
-    i = 0
+    index_list = list()
+
     while top:
         each = heapq.heappop(top)
-        result = "%2d %s \t来自:%s\n" % (num - i, df.at[each[1], 'content'], df.at[each[1], 'source']) + result
-        i += 1
+        index_list.append(each[1])
+        # print(index_list)
 
-    print(result)
+    df = df.loc[reversed(index_list)]
+
+    return df
 
 
 if __name__ == '__main__':
-    main()
+    show_top_message()
