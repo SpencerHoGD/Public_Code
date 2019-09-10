@@ -41,8 +41,8 @@ def show_top_message(num=40):
     df = df[df.end_time >= (now - 24 * 3600)]
 
     corpus = list(jieba.cut(''.join(df.content.to_numpy())))
-    # ignore_list= list()
-    ignore_list = ['的', '你', '我', '了', '又', '个', '什么', '吗', '为什么']
+    ignore_list = list()
+    # ignore_list = ['的', '你', '我', '了', '又', '个', '什么', '吗', '为什么']
     corpus = [word for word in corpus if word.isalpha() and word not in ignore_list]
 
     word_count = dict()
